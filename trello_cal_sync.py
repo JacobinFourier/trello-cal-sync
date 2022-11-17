@@ -12,6 +12,8 @@ from google.oauth2 import service_account
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from trello import TrelloClient
+from google.oauth2 import service_account
+
 
 
 class Trello:
@@ -20,7 +22,7 @@ class Trello:
     list_cache = {}
 
     def __init__(self, member, api_key, api_secret, token):
-        self.trello = TrelloClient(api_key=api_key, api_secret=api_secret, token=token)
+        self.trello = TrelloClient(api_key=api_key, api_secret=api_secret)
 
         self.member = member
         self.cards = []
@@ -171,7 +173,8 @@ class Calendar:
         creds = None
 
         if self.auth_type == "service_account":
-            creds = service_account.Credentials.from_service_account_file('service-account.json', scopes=self.SCOPES)
+            
+            creds = service_account.Credentials.from_service_account_file(r'C:\Users\vladi\Documents\GitHub\trello-cal-sync\service-account.json', scopes=self.SCOPES)
         elif self.auth_type == "oauth":
             # The file token.pickle stores the user's access and refresh tokens, and is
             # created automatically when the authorization flow completes for the first
@@ -185,7 +188,7 @@ class Calendar:
                     creds.refresh(Request())
                 else:
                     flow = InstalledAppFlow.from_client_secrets_file(
-                        'credentials.json', self.SCOPES)
+                        r'C:\Users\vladi\Documents\GitHub\trello-cal-sync\config.json', self.SCOPES)
                     creds = flow.run_local_server(port=0)
                 # Save the credentials for the next run
                 with open('token.pickle', 'wb') as token:
@@ -323,7 +326,7 @@ def read_config():
     read the config.json file and return it as a python data structure,
     substituting class names w/ class objects for the relevant args
     """
-    config = json.load(open("config.json", "r"))
+    config = json.load(open(r"C:\Users\vladi\Documents\GitHub\trello-cal-sync\config.json", "r"))
 
     for sync_item in config["sync"]:
         for class_arg in [key for key in sync_item.keys() if key.endswith("_class")]:
